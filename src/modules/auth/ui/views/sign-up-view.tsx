@@ -12,7 +12,6 @@ import {Input} from "@/components/ui/input";
 import {Alert, AlertTitle} from "@/components/ui/alert";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
-import {useRouter} from "next/navigation";
 import {useState} from "react";
 
 const formSchema = z.object({
@@ -28,7 +27,6 @@ const formSchema = z.object({
 
 export const SignUpView = () => {
 
-    const router = useRouter()
     const [error, setError] = useState<string | null>(null)
     const [pending, setPending] = useState<boolean | false>(false)
 
@@ -51,14 +49,36 @@ export const SignUpView = () => {
                 name: data.name,
                 email: data.email,
                 password: data.password,
-                confirmPassword: data.confirmPassword
+                confirmPassword: data.confirmPassword,
+                callbackURL: '/'
             },
             {
                 onSuccess: () => {
                     setPending(false)
-                    router.push("/")
                 },
                 onError: ({ error }) => {
+                    setError(error.message )
+                }
+            }
+        )
+    }
+
+    const onSocial = async (provider: "github" | "google") => {
+
+        setError(null)
+        setPending(true)
+
+        authClient.signIn.social(
+            {
+                provider: provider,
+                callbackURL: '/'
+            },
+            {
+                onSuccess: () => {
+                    setPending(false)
+                },
+                onError: ({ error }) => {
+                    setPending(false)
                     setError(error.message )
                 }
             }
@@ -178,6 +198,7 @@ export const SignUpView = () => {
                                         variant="outline"
                                         type="button"
                                         className="w-full"
+                                        onClick={() => onSocial('google')}
                                     >
                                         Google
                                     </Button>
@@ -185,6 +206,7 @@ export const SignUpView = () => {
                                         variant="outline"
                                         type="button"
                                         className="w-full"
+                                        onClick={() => onSocial('github')}
                                     >
                                         Github
                                     </Button>
