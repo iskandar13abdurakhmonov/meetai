@@ -9,6 +9,7 @@ import {DataTable} from "@/modules/agents/ui/components/data-table";
 import {columns} from "@/modules/agents/ui/components/columns";
 import {EmptyState} from "@/components/empty-state";
 import {useAgentsFilters} from "@/modules/agents/hooks/use-agents-filters";
+import {DataPagination} from "@/modules/agents/ui/components/data-pagination";
 
 
 export const AgentsView = () => {
@@ -25,6 +26,11 @@ export const AgentsView = () => {
             <DataTable
                 columns={columns}
                 data={data.items}
+            />
+            <DataPagination
+                page={filters.page}
+                totalPages={data.totalPages}
+                onPageChange={(page) => setFilters({ page: Number(page) })}
             />
             {data.items.length === 0 && (
                 <EmptyState
